@@ -2494,3 +2494,52 @@ fn snapshot_sort_repo_keeps_group_headers() {
         Waiting for prompt…
     ");
 }
+
+#[test]
+fn snapshot_sort_window_groups_by_window_without_spawn_button() {
+    // Window mode groups by tmux window (header = window name) and, unlike
+    // repo mode, shows no per-repo `[+]` spawn button even when the panes
+    // resolve a repo root.
+    let mut state = make_state(vec![]);
+    state.focus_state.focused_pane_id = None;
+    state.bottom_panel_height = 0;
+    state.sort_mode = tmux_agent_sidebar::ui::SortMode::Window;
+
+    let mk = |id: &str, name: &str| {
+        let mut p = make_pane(AgentType::Claude, PaneStatus::Idle);
+        p.pane_id = id.into();
+        p.pane_active = false;
+        p.session_name = name.into();
+        p
+    };
+    let git = PaneGitInfo {
+        repo_root: Some("/repo".into()),
+        branch: None,
+        is_worktree: false,
+        worktree_name: None,
+    };
+    let grp = |name: &str, panes: Vec<PaneInfo>| RepoGroup {
+        name: name.into(),
+        has_focus: false,
+        panes: panes.into_iter().map(|p| (p, git.clone())).collect(),
+    };
+    state.repo_groups = vec![
+        grp("editor", vec![mk("%1", "sess-a"), mk("%2", "sess-b")]),
+        grp("logs", vec![mk("%3", "sess-c")]),
+    ];
+    state.rebuild_row_targets();
+
+    let output = render_to_string(&mut state, 28, 14);
+    insta::assert_snapshot!(output, @"
+     ≡3  ●0  ◎0  ◐0  ○3  ✕0
+    ⓘ                        — ▾
+    editor
+      ○ sess-a
+        Waiting for prompt…
+      ○ sess-b
+        Waiting for prompt…
+    logs
+      ○ sess-c
+        Waiting for prompt…
+    ");
+}

@@ -131,10 +131,17 @@ pub(super) fn collect(state: &AppState, width: u16) -> CollectedRows {
         } else {
             theme.text_active
         };
-        let repo_root = group
-            .panes
-            .iter()
-            .find_map(|(_, git)| git.repo_root.clone());
+        // In window mode a group is a tmux window, not a repo, so there is no
+        // meaningful "spawn a new agent in this repo" target — suppress the
+        // `[+]` button by treating the group as having no repo root.
+        let repo_root = if state.sort_mode == crate::ui::SortMode::Window {
+            None
+        } else {
+            group
+                .panes
+                .iter()
+                .find_map(|(_, git)| git.repo_root.clone())
+        };
         let spans: Vec<Span<'static>> = if let Some(ref root) = repo_root {
             let title_w = display_width(title);
             let pad_width = width

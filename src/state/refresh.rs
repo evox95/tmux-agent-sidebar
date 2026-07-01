@@ -57,13 +57,14 @@ impl AppState {
         sessions: Vec<SessionInfo>,
     ) {
         self.focus_state.sidebar_focused = sidebar_focused;
-        self.repo_groups = crate::group::group_panes_by_repo(&sessions);
-        // `group_panes_by_repo` builds fresh `PaneInfo`s with an empty
-        // `session_name`, so the `/rename` label has to be re-applied from the
-        // cached map on *every* snapshot. Gating this behind a "dirty" flag
-        // meant the label only survived on the ticks where a session_id
-        // changed (or the 10s names poll landed) and reverted to the default
-        // agent name in between — the transient-name bug (#112).
+        self.repo_groups = match self.sort_mode {
+            crate::ui::SortMode::Window => crate::group::group_panes_by_window(&sessions),
+            _ => crate::group::group_panes_by_repo(&sessions),
+        };
+        // The grouper builds fresh `PaneInfo`s with an empty `session_name`,
+        // so the `/rename` label has to be re-applied from the cached map on
+        // *every* snapshot; a "dirty"-gated apply left it blank on the common
+        // tick and reverted the row to the default agent name (#112).
         self.refresh_session_names();
         self.prune_pane_states_to_current_panes();
         self.rebuild_row_targets();
