@@ -463,6 +463,7 @@ mod tests {
             session_name: "main".into(),
             windows: vec![WindowInfo {
                 window_id: "@0".into(),
+                window_index: String::new(),
                 window_name: "test".into(),
                 window_active: true,
                 auto_rename: false,

@@ -99,6 +99,9 @@ pub enum AgentType {
 #[derive(Debug, Clone)]
 pub struct WindowInfo {
     pub window_id: String,
+    /// tmux window index within its session (the number shown in the status
+    /// bar), used to label window groups in `@sidebar_sort window`.
+    pub window_index: String,
     pub window_name: String,
     pub window_active: bool,
     pub auto_rename: bool,

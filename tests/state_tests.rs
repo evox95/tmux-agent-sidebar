@@ -82,6 +82,7 @@ fn test_line_to_row_single_agent() {
         session_name: "main".into(),
         windows: vec![WindowInfo {
             window_id: "@1".into(),
+            window_index: String::new(),
             window_name: "project".into(),
             window_active: true,
             auto_rename: false,
@@ -147,6 +148,7 @@ fn test_line_to_row_two_agents() {
         session_name: "main".into(),
         windows: vec![WindowInfo {
             window_id: "@1".into(),
+            window_index: String::new(),
             window_name: "project".into(),
             window_active: true,
             auto_rename: false,
@@ -173,6 +175,7 @@ fn test_line_to_row_with_prompt() {
         session_name: "main".into(),
         windows: vec![WindowInfo {
             window_id: "@1".into(),
+            window_index: String::new(),
             window_name: "project".into(),
             window_active: true,
             auto_rename: false,
@@ -196,6 +199,7 @@ fn test_line_to_row_with_version_banner() {
         session_name: "main".into(),
         windows: vec![WindowInfo {
             window_id: "@1".into(),
+            window_index: String::new(),
             window_name: "project".into(),
             window_active: true,
             auto_rename: false,
@@ -223,6 +227,7 @@ fn test_secondary_header_click_on_i_opens_notices_popup_even_without_missing_hoo
         session_name: "main".into(),
         windows: vec![WindowInfo {
             window_id: "@1".into(),
+            window_index: String::new(),
             window_name: "project".into(),
             window_active: true,
             auto_rename: false,

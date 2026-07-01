@@ -79,6 +79,7 @@ fn snapshot_git_status_tab_ui() {
         session_name: "main".into(),
         windows: vec![WindowInfo {
             window_id: "@1".into(),
+            window_index: String::new(),
             window_name: "project".into(),
             window_active: true,
             auto_rename: false,
@@ -137,6 +138,7 @@ fn snapshot_git_clean_ui() {
         session_name: "main".into(),
         windows: vec![WindowInfo {
             window_id: "@1".into(),
+            window_index: String::new(),
             window_name: "project".into(),
             window_active: true,
             auto_rename: false,
@@ -169,6 +171,7 @@ fn snapshot_activity_tab_active_ui() {
         session_name: "main".into(),
         windows: vec![WindowInfo {
             window_id: "@1".into(),
+            window_index: String::new(),
             window_name: "project".into(),
             window_active: true,
             auto_rename: false,
@@ -206,6 +209,7 @@ fn activity_tab_leaves_one_blank_row_above_entries() {
         session_name: "main".into(),
         windows: vec![WindowInfo {
             window_id: "@1".into(),
+            window_index: String::new(),
             window_name: "project".into(),
             window_active: true,
             auto_rename: false,
@@ -249,6 +253,7 @@ fn snapshot_activity_long_tool_keeps_one_space_gap() {
         session_name: "main".into(),
         windows: vec![WindowInfo {
             window_id: "@1".into(),
+            window_index: String::new(),
             window_name: "project".into(),
             window_active: true,
             auto_rename: false,
@@ -284,6 +289,7 @@ fn snapshot_tab_bar_renders_both_labels() {
         session_name: "main".into(),
         windows: vec![WindowInfo {
             window_id: "@1".into(),
+            window_index: String::new(),
             window_name: "project".into(),
             window_active: true,
             auto_rename: false,
@@ -318,6 +324,7 @@ fn snapshot_git_full_info_ui() {
         session_name: "main".into(),
         windows: vec![WindowInfo {
             window_id: "@1".into(),
+            window_index: String::new(),
             window_name: "project".into(),
             window_active: true,
             auto_rename: false,
@@ -377,6 +384,7 @@ fn snapshot_git_diff_summary_tight_ui() {
         session_name: "main".into(),
         windows: vec![WindowInfo {
             window_id: "@1".into(),
+            window_index: String::new(),
             window_name: "project".into(),
             window_active: true,
             auto_rename: false,
@@ -411,6 +419,7 @@ fn snapshot_git_staged_file_diff_right_ui() {
         session_name: "main".into(),
         windows: vec![WindowInfo {
             window_id: "@1".into(),
+            window_index: String::new(),
             window_name: "project".into(),
             window_active: true,
             auto_rename: false,
@@ -453,6 +462,7 @@ fn snapshot_git_unstaged_long_name_diff_right_ui() {
         session_name: "main".into(),
         windows: vec![WindowInfo {
             window_id: "@1".into(),
+            window_index: String::new(),
             window_name: "project".into(),
             window_active: true,
             auto_rename: false,
@@ -495,6 +505,7 @@ fn snapshot_git_long_filename_truncated_ui() {
         session_name: "main".into(),
         windows: vec![WindowInfo {
             window_id: "@1".into(),
+            window_index: String::new(),
             window_name: "project".into(),
             window_active: true,
             auto_rename: false,
@@ -549,6 +560,7 @@ fn snapshot_git_more_than_5_files() {
         session_name: "main".into(),
         windows: vec![WindowInfo {
             window_id: "@1".into(),
+            window_index: String::new(),
             window_name: "project".into(),
             window_active: true,
             auto_rename: false,
@@ -671,6 +683,7 @@ fn snapshot_git_branch_only_no_changes() {
         session_name: "main".into(),
         windows: vec![WindowInfo {
             window_id: "@1".into(),
+            window_index: String::new(),
             window_name: "project".into(),
             window_active: true,
             auto_rename: false,
@@ -704,6 +717,7 @@ fn snapshot_git_pr_number_ui() {
         session_name: "main".into(),
         windows: vec![WindowInfo {
             window_id: "@1".into(),
+            window_index: String::new(),
             window_name: "project".into(),
             window_active: true,
             auto_rename: false,
@@ -766,6 +780,7 @@ fn snapshot_git_pr_with_diff_ui() {
         session_name: "main".into(),
         windows: vec![WindowInfo {
             window_id: "@1".into(),
+            window_index: String::new(),
             window_name: "project".into(),
             window_active: true,
             auto_rename: false,
@@ -804,6 +819,7 @@ fn snapshot_subagents_tree_ui() {
         session_name: "main".into(),
         windows: vec![WindowInfo {
             window_id: "@1".into(),
+            window_index: String::new(),
             window_name: "project".into(),
             window_active: true,
             auto_rename: false,
@@ -840,6 +856,7 @@ fn snapshot_subagent_long_name_truncated_ui() {
         session_name: "main".into(),
         windows: vec![WindowInfo {
             window_id: "@1".into(),
+            window_index: String::new(),
             window_name: "project".into(),
             window_active: true,
             auto_rename: false,
@@ -875,6 +892,7 @@ fn snapshot_activity_empty_centered_ui() {
         session_name: "main".into(),
         windows: vec![WindowInfo {
             window_id: "@1".into(),
+            window_index: String::new(),
             window_name: "project".into(),
             window_active: true,
             auto_rename: false,
@@ -906,6 +924,7 @@ fn snapshot_git_clean_centered_ui() {
         session_name: "main".into(),
         windows: vec![WindowInfo {
             window_id: "@1".into(),
+            window_index: String::new(),
             window_name: "project".into(),
             window_active: true,
             auto_rename: false,
@@ -942,6 +961,7 @@ fn snapshot_git_branch_loaded_no_changes_shows_inline_clean() {
         session_name: "main".into(),
         windows: vec![WindowInfo {
             window_id: "@1".into(),
+            window_index: String::new(),
             window_name: "project".into(),
             window_active: true,
             auto_rename: false,
@@ -978,6 +998,7 @@ fn snapshot_git_no_data_shows_centered_clean() {
         session_name: "main".into(),
         windows: vec![WindowInfo {
             window_id: "@1".into(),
+            window_index: String::new(),
             window_name: "project".into(),
             window_active: true,
             auto_rename: false,
@@ -1012,6 +1033,7 @@ fn test_git_behind_only() {
         session_name: "main".into(),
         windows: vec![WindowInfo {
             window_id: "@1".into(),
+            window_index: String::new(),
             window_name: "project".into(),
             window_active: true,
             auto_rename: false,
@@ -1045,6 +1067,7 @@ fn test_git_ahead_and_behind() {
         session_name: "main".into(),
         windows: vec![WindowInfo {
             window_id: "@1".into(),
+            window_index: String::new(),
             window_name: "project".into(),
             window_active: true,
             auto_rename: false,
@@ -1080,6 +1103,7 @@ fn test_git_diff_insertions_only() {
         session_name: "main".into(),
         windows: vec![WindowInfo {
             window_id: "@1".into(),
+            window_index: String::new(),
             window_name: "project".into(),
             window_active: true,
             auto_rename: false,
@@ -1114,6 +1138,7 @@ fn test_git_diff_deletions_only() {
         session_name: "main".into(),
         windows: vec![WindowInfo {
             window_id: "@1".into(),
+            window_index: String::new(),
             window_name: "project".into(),
             window_active: true,
             auto_rename: false,
@@ -1148,6 +1173,7 @@ fn snapshot_branch_truncated_ui() {
         session_name: "main".into(),
         windows: vec![WindowInfo {
             window_id: "@0".into(),
+            window_index: String::new(),
             window_name: "project".into(),
             window_active: true,
             auto_rename: false,
@@ -1190,6 +1216,7 @@ fn snapshot_git_staged_unstaged_untracked_ui() {
         session_name: "main".into(),
         windows: vec![WindowInfo {
             window_id: "@1".into(),
+            window_index: String::new(),
             window_name: "project".into(),
             window_active: true,
             auto_rename: false,
@@ -1258,6 +1285,7 @@ fn snapshot_git_long_branch_with_pr_ui() {
         session_name: "main".into(),
         windows: vec![WindowInfo {
             window_id: "@1".into(),
+            window_index: String::new(),
             window_name: "project".into(),
             window_active: true,
             auto_rename: false,
@@ -1304,6 +1332,7 @@ fn snapshot_git_staged_only_ui() {
         session_name: "main".into(),
         windows: vec![WindowInfo {
             window_id: "@1".into(),
+            window_index: String::new(),
             window_name: "project".into(),
             window_active: true,
             auto_rename: false,
@@ -1348,6 +1377,7 @@ fn snapshot_git_many_files_more_indicator_ui() {
         session_name: "main".into(),
         windows: vec![WindowInfo {
             window_id: "@1".into(),
+            window_index: String::new(),
             window_name: "project".into(),
             window_active: true,
             auto_rename: false,
@@ -1401,6 +1431,7 @@ fn snapshot_git_more_than_10_files_ui() {
         session_name: "main".into(),
         windows: vec![WindowInfo {
             window_id: "@1".into(),
+            window_index: String::new(),
             window_name: "project".into(),
             window_active: true,
             auto_rename: false,
@@ -1463,6 +1494,7 @@ fn snapshot_focused_group_active_border_styled() {
         session_name: "main".into(),
         windows: vec![WindowInfo {
             window_id: "@0".into(),
+            window_index: String::new(),
             window_name: "fish".into(),
             window_active: true,
             auto_rename: true,
@@ -1533,6 +1565,7 @@ fn test_pet_enabled_preserves_bottom_panel_border() {
         session_name: "main".into(),
         windows: vec![WindowInfo {
             window_id: "@1".into(),
+            window_index: String::new(),
             window_name: "project".into(),
             window_active: true,
             auto_rename: false,

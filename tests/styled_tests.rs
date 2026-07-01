@@ -15,6 +15,7 @@ fn snapshot_selected_focused_styled() {
         session_name: "main".into(),
         windows: vec![WindowInfo {
             window_id: "@1".into(),
+            window_index: String::new(),
             window_name: "project".into(),
             window_active: true,
             auto_rename: false,
@@ -45,6 +46,7 @@ fn snapshot_activity_focused_styled() {
         session_name: "main".into(),
         windows: vec![WindowInfo {
             window_id: "@1".into(),
+            window_index: String::new(),
             window_name: "project".into(),
             window_active: true,
             auto_rename: false,
@@ -88,6 +90,7 @@ fn snapshot_activity_unfocused_styled() {
         session_name: "main".into(),
         windows: vec![WindowInfo {
             window_id: "@1".into(),
+            window_index: String::new(),
             window_name: "project".into(),
             window_active: true,
             auto_rename: false,
@@ -131,6 +134,7 @@ fn bottom_tab_activity_uses_accent_when_selected() {
         session_name: "main".into(),
         windows: vec![WindowInfo {
             window_id: "@1".into(),
+            window_index: String::new(),
             window_name: "project".into(),
             window_active: true,
             auto_rename: false,
@@ -170,6 +174,7 @@ fn bottom_tab_git_uses_accent_when_selected() {
         session_name: "main".into(),
         windows: vec![WindowInfo {
             window_id: "@1".into(),
+            window_index: String::new(),
             window_name: "project".into(),
             window_active: true,
             auto_rename: false,
@@ -211,6 +216,7 @@ fn selection_marker_uses_accent_color_with_selection_bg() {
         session_name: "main".into(),
         windows: vec![WindowInfo {
             window_id: "@1".into(),
+            window_index: String::new(),
             window_name: "project".into(),
             window_active: true,
             auto_rename: false,
@@ -261,6 +267,7 @@ fn selection_bg_covers_inner_padding() {
         session_name: "main".into(),
         windows: vec![WindowInfo {
             window_id: "@1".into(),
+            window_index: String::new(),
             window_name: "project".into(),
             window_active: true,
             auto_rename: false,
@@ -310,6 +317,7 @@ fn no_selection_bg_when_not_selected() {
         session_name: "main".into(),
         windows: vec![WindowInfo {
             window_id: "@1".into(),
+            window_index: String::new(),
             window_name: "project".into(),
             window_active: true,
             auto_rename: false,
@@ -362,6 +370,7 @@ fn snapshot_custom_theme_colors() {
         session_name: "main".into(),
         windows: vec![WindowInfo {
             window_id: "@1".into(),
+            window_index: String::new(),
             window_name: "project".into(),
             window_active: true,
             auto_rename: false,

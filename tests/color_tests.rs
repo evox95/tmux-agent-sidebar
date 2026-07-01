@@ -127,6 +127,7 @@ fn test_permission_mode_bypass_all_renders_danger_color() {
         session_name: "main".into(),
         windows: vec![WindowInfo {
             window_id: "@1".into(),
+            window_index: String::new(),
             window_name: "project".into(),
             window_active: true,
             auto_rename: false,
@@ -178,6 +179,7 @@ fn test_permission_mode_full_auto_renders_auto_color() {
         session_name: "main".into(),
         windows: vec![WindowInfo {
             window_id: "@1".into(),
+            window_index: String::new(),
             window_name: "project".into(),
             window_active: true,
             auto_rename: false,
@@ -229,6 +231,7 @@ fn test_permission_mode_normal_no_badge() {
         session_name: "main".into(),
         windows: vec![WindowInfo {
             window_id: "@1".into(),
+            window_index: String::new(),
             window_name: "project".into(),
             window_active: true,
             auto_rename: false,
@@ -290,6 +293,7 @@ fn test_git_summary_modified_uses_badge_auto_color() {
         session_name: "main".into(),
         windows: vec![WindowInfo {
             window_id: "@1".into(),
+            window_index: String::new(),
             window_name: "project".into(),
             window_active: true,
             auto_rename: false,
@@ -353,6 +357,7 @@ fn test_task_progress_line_uses_task_progress_color() {
         session_name: "main".into(),
         windows: vec![WindowInfo {
             window_id: "@1".into(),
+            window_index: String::new(),
             window_name: "project".into(),
             window_active: true,
             auto_rename: false,
@@ -428,6 +433,7 @@ fn test_subagent_line_uses_subagent_color() {
         session_name: "main".into(),
         windows: vec![WindowInfo {
             window_id: "@1".into(),
+            window_index: String::new(),
             window_name: "project".into(),
             window_active: true,
             auto_rename: false,
@@ -482,6 +488,7 @@ fn test_response_arrow_uses_response_arrow_color() {
         session_name: "main".into(),
         windows: vec![WindowInfo {
             window_id: "@1".into(),
+            window_index: String::new(),
             window_name: "project".into(),
             window_active: true,
             auto_rename: false,
@@ -536,6 +543,7 @@ fn test_pr_link_uses_pr_link_color() {
         session_name: "main".into(),
         windows: vec![WindowInfo {
             window_id: "@1".into(),
+            window_index: String::new(),
             window_name: "project".into(),
             window_active: true,
             auto_rename: false,
@@ -605,6 +613,7 @@ fn test_diff_stat_added_uses_diff_added_color() {
         session_name: "main".into(),
         windows: vec![WindowInfo {
             window_id: "@1".into(),
+            window_index: String::new(),
             window_name: "project".into(),
             window_active: true,
             auto_rename: false,
@@ -673,6 +682,7 @@ fn test_diff_stat_deleted_uses_diff_deleted_color() {
         session_name: "main".into(),
         windows: vec![WindowInfo {
             window_id: "@1".into(),
+            window_index: String::new(),
             window_name: "project".into(),
             window_active: true,
             auto_rename: false,
@@ -726,6 +736,7 @@ fn test_file_change_stat_uses_file_change_color() {
         session_name: "main".into(),
         windows: vec![WindowInfo {
             window_id: "@1".into(),
+            window_index: String::new(),
             window_name: "project".into(),
             window_active: true,
             auto_rename: false,
@@ -824,6 +835,7 @@ fn test_branch_color_in_agent_panel() {
         session_name: "main".into(),
         windows: vec![WindowInfo {
             window_id: "@1".into(),
+            window_index: String::new(),
             window_name: "project".into(),
             window_active: true,
             auto_rename: false,
@@ -867,6 +879,7 @@ fn test_selection_bg_color_applied() {
         session_name: "main".into(),
         windows: vec![WindowInfo {
             window_id: "@1".into(),
+            window_index: String::new(),
             window_name: "project".into(),
             window_active: true,
             auto_rename: false,
@@ -922,6 +935,7 @@ fn test_accent_vs_border_inactive_colors() {
         session_name: "main".into(),
         windows: vec![WindowInfo {
             window_id: "@0".into(),
+            window_index: String::new(),
             window_name: "fish".into(),
             window_active: true,
             auto_rename: true,
@@ -989,6 +1003,7 @@ fn test_running_status_color_in_output() {
         session_name: "main".into(),
         windows: vec![WindowInfo {
             window_id: "@1".into(),
+            window_index: String::new(),
             window_name: "project".into(),
             window_active: true,
             auto_rename: false,
@@ -1017,6 +1032,7 @@ fn test_waiting_status_color_in_output() {
         session_name: "main".into(),
         windows: vec![WindowInfo {
             window_id: "@1".into(),
+            window_index: String::new(),
             window_name: "project".into(),
             window_active: true,
             auto_rename: false,
@@ -1045,6 +1061,7 @@ fn test_error_status_color_in_output() {
         session_name: "main".into(),
         windows: vec![WindowInfo {
             window_id: "@1".into(),
+            window_index: String::new(),
             window_name: "project".into(),
             window_active: true,
             auto_rename: false,
@@ -1073,6 +1090,7 @@ fn test_idle_status_color_in_output() {
         session_name: "main".into(),
         windows: vec![WindowInfo {
             window_id: "@1".into(),
+            window_index: String::new(),
             window_name: "project".into(),
             window_active: true,
             auto_rename: false,

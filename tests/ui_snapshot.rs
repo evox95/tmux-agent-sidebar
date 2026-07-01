@@ -18,6 +18,7 @@ fn snapshot_single_agent_idle_ui() {
         session_name: "main".into(),
         windows: vec![WindowInfo {
             window_id: "@1".into(),
+            window_index: String::new(),
             window_name: "project".into(),
             window_active: true,
             auto_rename: false,
@@ -51,6 +52,7 @@ fn snapshot_secondary_header_without_notices() {
         session_name: "main".into(),
         windows: vec![WindowInfo {
             window_id: "@1".into(),
+            window_index: String::new(),
             window_name: "project".into(),
             window_active: true,
             auto_rename: false,
@@ -81,6 +83,7 @@ fn snapshot_secondary_header_long_repo_filter_truncated() {
         session_name: "main".into(),
         windows: vec![WindowInfo {
             window_id: "@1".into(),
+            window_index: String::new(),
             window_name: "project".into(),
             window_active: true,
             auto_rename: false,
@@ -110,6 +113,7 @@ fn snapshot_version_banner_does_not_duplicate_in_scroll_area() {
         session_name: "main".into(),
         windows: vec![WindowInfo {
             window_id: "@1".into(),
+            window_index: String::new(),
             window_name: "project".into(),
             window_active: true,
             auto_rename: false,
@@ -143,6 +147,7 @@ fn snapshot_single_agent_running_with_elapsed() {
         session_name: "main".into(),
         windows: vec![WindowInfo {
             window_id: "@1".into(),
+            window_index: String::new(),
             window_name: "dotfiles".into(),
             window_active: true,
             auto_rename: false,
@@ -174,6 +179,7 @@ fn snapshot_long_session_name_truncated_keeps_elapsed_visible() {
         session_name: "main".into(),
         windows: vec![WindowInfo {
             window_id: "@1".into(),
+            window_index: String::new(),
             window_name: "dotfiles".into(),
             window_active: true,
             auto_rename: false,
@@ -202,6 +208,7 @@ fn running_spinner_different_frame() {
         session_name: "main".into(),
         windows: vec![WindowInfo {
             window_id: "@1".into(),
+            window_index: String::new(),
             window_name: "project".into(),
             window_active: true,
             auto_rename: false,
@@ -233,6 +240,7 @@ fn snapshot_agent_with_prompt_ui() {
         session_name: "main".into(),
         windows: vec![WindowInfo {
             window_id: "@1".into(),
+            window_index: String::new(),
             window_name: "project".into(),
             window_active: true,
             auto_rename: false,
@@ -263,6 +271,7 @@ fn snapshot_agent_with_japanese_prompt_ui() {
         session_name: "main".into(),
         windows: vec![WindowInfo {
             window_id: "@1".into(),
+            window_index: String::new(),
             window_name: "project".into(),
             window_active: true,
             auto_rename: false,
@@ -335,6 +344,7 @@ fn snapshot_two_agents_same_window_ui() {
         session_name: "main".into(),
         windows: vec![WindowInfo {
             window_id: "@1".into(),
+            window_index: String::new(),
             window_name: "project".into(),
             window_active: true,
             auto_rename: false,
@@ -368,6 +378,7 @@ fn snapshot_two_windows_ui() {
         windows: vec![
             WindowInfo {
                 window_id: "@1".into(),
+                window_index: String::new(),
                 window_name: "project-a".into(),
                 window_active: true,
                 auto_rename: false,
@@ -375,6 +386,7 @@ fn snapshot_two_windows_ui() {
             },
             WindowInfo {
                 window_id: "@2".into(),
+                window_index: String::new(),
                 window_name: "project-b".into(),
                 window_active: false,
                 auto_rename: false,
@@ -414,6 +426,7 @@ fn snapshot_multi_session_ui() {
             session_name: "main".into(),
             windows: vec![WindowInfo {
                 window_id: "@1".into(),
+                window_index: String::new(),
                 window_name: "dotfiles".into(),
                 window_active: true,
                 auto_rename: false,
@@ -424,6 +437,7 @@ fn snapshot_multi_session_ui() {
             session_name: "work".into(),
             windows: vec![WindowInfo {
                 window_id: "@2".into(),
+                window_index: String::new(),
                 window_name: "api".into(),
                 window_active: false,
                 auto_rename: false,
@@ -460,6 +474,7 @@ fn snapshot_wait_reason_ui() {
         session_name: "main".into(),
         windows: vec![WindowInfo {
             window_id: "@1".into(),
+            window_index: String::new(),
             window_name: "project".into(),
             window_active: true,
             auto_rename: false,
@@ -489,6 +504,7 @@ fn snapshot_auto_rename_window_title_ui() {
         session_name: "main".into(),
         windows: vec![WindowInfo {
             window_id: "@1".into(),
+            window_index: String::new(),
             window_name: "fish".into(),
             window_active: true,
             auto_rename: true,
@@ -518,6 +534,7 @@ fn snapshot_activity_log_ui() {
         session_name: "main".into(),
         windows: vec![WindowInfo {
             window_id: "@1".into(),
+            window_index: String::new(),
             window_name: "project".into(),
             window_active: true,
             auto_rename: false,
@@ -569,6 +586,7 @@ fn snapshot_activity_log_long_label_ui() {
         session_name: "main".into(),
         windows: vec![WindowInfo {
             window_id: "@1".into(),
+            window_index: String::new(),
             window_name: "project".into(),
             window_active: true,
             auto_rename: false,
@@ -610,6 +628,7 @@ fn snapshot_prompt_wrapping_ui() {
         session_name: "main".into(),
         windows: vec![WindowInfo {
             window_id: "@1".into(),
+            window_index: String::new(),
             window_name: "project".into(),
             window_active: true,
             auto_rename: false,
@@ -640,6 +659,7 @@ fn snapshot_selected_unfocused_ui() {
         session_name: "main".into(),
         windows: vec![WindowInfo {
             window_id: "@1".into(),
+            window_index: String::new(),
             window_name: "project".into(),
             window_active: true,
             auto_rename: false,
@@ -672,6 +692,7 @@ fn snapshot_error_state_ui() {
         session_name: "main".into(),
         windows: vec![WindowInfo {
             window_id: "@1".into(),
+            window_index: String::new(),
             window_name: "project".into(),
             window_active: true,
             auto_rename: false,
@@ -702,6 +723,7 @@ fn snapshot_narrow_width_ui() {
         session_name: "main".into(),
         windows: vec![WindowInfo {
             window_id: "@1".into(),
+            window_index: String::new(),
             window_name: "p".into(),
             window_active: true,
             auto_rename: false,
@@ -732,6 +754,7 @@ fn make_state_with_groups(
         session_name: "main".into(),
         windows: vec![WindowInfo {
             window_id: "@1".into(),
+            window_index: String::new(),
             window_name: "dummy".into(),
             window_active: true,
             auto_rename: false,
@@ -2331,6 +2354,7 @@ fn snapshot_background_status_shows_bg_command_row() {
         session_name: "main".into(),
         windows: vec![WindowInfo {
             window_id: "@1".into(),
+            window_index: String::new(),
             window_name: "project".into(),
             window_active: true,
             auto_rename: false,
@@ -2362,6 +2386,7 @@ fn snapshot_running_pane_still_shows_live_bg_command() {
         session_name: "main".into(),
         windows: vec![WindowInfo {
             window_id: "@1".into(),
+            window_index: String::new(),
             window_name: "project".into(),
             window_active: true,
             auto_rename: false,
@@ -2392,6 +2417,7 @@ fn snapshot_background_long_command_truncates_with_ellipsis() {
         session_name: "main".into(),
         windows: vec![WindowInfo {
             window_id: "@1".into(),
+            window_index: String::new(),
             window_name: "project".into(),
             window_active: true,
             auto_rename: false,

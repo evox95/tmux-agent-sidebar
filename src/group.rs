@@ -171,10 +171,17 @@ pub fn group_panes_by_window(sessions: &[crate::tmux::SessionInfo]) -> Vec<RepoG
             for pane in &window.panes {
                 let git_info = pane_git_info(pane, &mut git_cache);
 
-                let display_name = if window.window_name.is_empty() {
-                    window.window_id.clone()
-                } else {
-                    window.window_name.clone()
+                // Windows usually auto-rename to the running command (e.g.
+                // every agent window shows "claude"), so lead with the tmux
+                // window index to keep group headers distinguishable.
+                let display_name = match (
+                    window.window_index.is_empty(),
+                    window.window_name.is_empty(),
+                ) {
+                    (false, false) => format!("{}: {}", window.window_index, window.window_name),
+                    (false, true) => window.window_index.clone(),
+                    (true, false) => window.window_name.clone(),
+                    (true, true) => window.window_id.clone(),
                 };
 
                 let has_focus = window.window_active && pane.pane_active;
@@ -288,6 +295,7 @@ mod tests {
     fn test_window(panes: Vec<PaneInfo>, active: bool) -> crate::tmux::WindowInfo {
         crate::tmux::WindowInfo {
             window_id: "@0".into(),
+            window_index: String::new(),
             window_name: "test".into(),
             window_active: active,
             auto_rename: false,
@@ -302,9 +310,15 @@ mod tests {
         }
     }
 
-    fn named_window(id: &str, name: &str, panes: Vec<PaneInfo>) -> crate::tmux::WindowInfo {
+    fn named_window(
+        id: &str,
+        index: &str,
+        name: &str,
+        panes: Vec<PaneInfo>,
+    ) -> crate::tmux::WindowInfo {
         crate::tmux::WindowInfo {
             window_id: id.into(),
+            window_index: index.into(),
             window_name: name.into(),
             window_active: false,
             auto_rename: false,
@@ -317,9 +331,10 @@ mod tests {
         // Two windows; the first ("zed") sorts after the second ("abc")
         // alphabetically, so preserving tmux order (not sorting) is testable.
         let sessions = vec![test_session(vec![
-            named_window("@1", "zed", vec![test_pane("%1", "/tmp")]),
+            named_window("@1", "3", "zed", vec![test_pane("%1", "/tmp")]),
             named_window(
                 "@2",
+                "1",
                 "abc",
                 vec![test_pane("%2", "/tmp"), test_pane("%3", "/tmp")],
             ),
@@ -328,9 +343,10 @@ mod tests {
         let groups = group_panes_by_window(&sessions);
 
         assert_eq!(groups.len(), 2, "one group per tmux window");
-        // Insertion (tmux) order preserved — NOT alphabetical.
-        assert_eq!(groups[0].name, "zed");
-        assert_eq!(groups[1].name, "abc");
+        // Insertion (tmux) order preserved — NOT alphabetical; header is
+        // "index: name" so auto-renamed windows stay distinguishable.
+        assert_eq!(groups[0].name, "3: zed");
+        assert_eq!(groups[1].name, "1: abc");
         let ids0: Vec<&str> = groups[0]
             .panes
             .iter()
@@ -349,8 +365,8 @@ mod tests {
     fn group_panes_by_window_same_name_different_windows_stay_separate() {
         // Same window_name but distinct window_id => distinct groups.
         let sessions = vec![test_session(vec![
-            named_window("@1", "shell", vec![test_pane("%1", "/tmp")]),
-            named_window("@2", "shell", vec![test_pane("%2", "/tmp")]),
+            named_window("@1", "0", "shell", vec![test_pane("%1", "/tmp")]),
+            named_window("@2", "1", "shell", vec![test_pane("%2", "/tmp")]),
         ])];
 
         let groups = group_panes_by_window(&sessions);

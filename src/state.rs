@@ -1019,6 +1019,7 @@ mod tests {
             session_name: "main".into(),
             windows: vec![crate::tmux::WindowInfo {
                 window_id: "@0".into(),
+                window_index: String::new(),
                 window_name: "project".into(),
                 window_active: true,
                 auto_rename: false,

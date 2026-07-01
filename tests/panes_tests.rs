@@ -23,6 +23,7 @@ fn test_agents_auto_scroll_keeps_selected_visible() {
         session_name: "main".into(),
         windows: vec![WindowInfo {
             window_id: "@1".into(),
+            window_index: String::new(),
             window_name: "project".into(),
             window_active: true,
             auto_rename: false,
@@ -55,6 +56,7 @@ fn test_panes_scroll_offset_tracks_total_and_visible() {
         session_name: "main".into(),
         windows: vec![WindowInfo {
             window_id: "@1".into(),
+            window_index: String::new(),
             window_name: "project".into(),
             window_active: true,
             auto_rename: false,
@@ -107,6 +109,7 @@ fn test_running_icon_blink_off() {
         session_name: "main".into(),
         windows: vec![WindowInfo {
             window_id: "@1".into(),
+            window_index: String::new(),
             window_name: "project".into(),
             window_active: true,
             auto_rename: false,
@@ -136,6 +139,7 @@ fn test_running_spinner_frame_advances() {
         session_name: "main".into(),
         windows: vec![WindowInfo {
             window_id: "@1".into(),
+            window_index: String::new(),
             window_name: "project".into(),
             window_active: true,
             auto_rename: false,
@@ -165,6 +169,7 @@ fn test_waiting_icon() {
         session_name: "main".into(),
         windows: vec![WindowInfo {
             window_id: "@1".into(),
+            window_index: String::new(),
             window_name: "project".into(),
             window_active: true,
             auto_rename: false,
@@ -193,6 +198,7 @@ fn test_error_icon() {
         session_name: "main".into(),
         windows: vec![WindowInfo {
             window_id: "@1".into(),
+            window_index: String::new(),
             window_name: "project".into(),
             window_active: true,
             auto_rename: false,
@@ -237,6 +243,7 @@ fn test_agents_auto_scroll_shows_last_selected_pane() {
         session_name: "main".into(),
         windows: vec![WindowInfo {
             window_id: "@1".into(),
+            window_index: String::new(),
             window_name: "project".into(),
             window_active: true,
             auto_rename: false,
@@ -275,6 +282,7 @@ fn test_agents_auto_scroll_up_shows_group_header() {
         session_name: "main".into(),
         windows: vec![WindowInfo {
             window_id: "@1".into(),
+            window_index: String::new(),
             window_name: "project".into(),
             window_active: true,
             auto_rename: false,
@@ -316,6 +324,7 @@ fn repo_popup_renders_repo_names_when_open() {
         session_name: "main".into(),
         windows: vec![WindowInfo {
             window_id: "@1".into(),
+            window_index: String::new(),
             window_name: "frontend".into(),
             window_active: true,
             auto_rename: false,
@@ -363,6 +372,7 @@ fn repo_popup_highlights_selected_entry_with_background() {
         session_name: "main".into(),
         windows: vec![WindowInfo {
             window_id: "@1".into(),
+            window_index: String::new(),
             window_name: "frontend".into(),
             window_active: true,
             auto_rename: false,

@@ -22,6 +22,7 @@ use crate::worktree::SPAWNED_OPTION;
 mod session_line_field {
     pub const SESSION_NAME: usize = 0;
     pub const WINDOW_ID: usize = 1;
+    pub const WINDOW_INDEX: usize = 2;
     pub const WINDOW_NAME: usize = 3;
     pub const WINDOW_ACTIVE: usize = 4;
     pub const AUTOMATIC_RENAME: usize = 5;
@@ -177,6 +178,7 @@ fn build_session_hierarchy(
             .entry(window_id.to_string())
             .or_insert_with(|| WindowInfo {
                 window_id: window_id.to_string(),
+                window_index: parts[session_line_field::WINDOW_INDEX].to_string(),
                 window_name: parts[session_line_field::WINDOW_NAME].to_string(),
                 window_active: parts[session_line_field::WINDOW_ACTIVE] == "1",
                 auto_rename: parts[session_line_field::AUTOMATIC_RENAME] == "1",
@@ -1166,6 +1168,7 @@ mod tests {
             "@1".to_string(),
             WindowInfo {
                 window_id: "@1".into(),
+                window_index: String::new(),
                 window_name: "with-pane".into(),
                 window_active: true,
                 auto_rename: false,
@@ -1196,6 +1199,7 @@ mod tests {
             "@2".to_string(),
             WindowInfo {
                 window_id: "@2".into(),
+                window_index: String::new(),
                 window_name: "empty".into(),
                 window_active: false,
                 auto_rename: false,
@@ -1222,6 +1226,7 @@ mod tests {
             "@9".to_string(),
             WindowInfo {
                 window_id: "@9".into(),
+                window_index: String::new(),
                 window_name: "ghost".into(),
                 window_active: false,
                 auto_rename: false,
