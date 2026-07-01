@@ -61,16 +61,21 @@ pub enum SortMode {
     /// A single flat list of every session ordered by start time, oldest
     /// first. Repo group headers (and their spawn buttons) are suppressed.
     Started,
+    /// Group panes by the tmux window they live in, in natural window order.
+    /// The group header is the window name; no per-repo spawn button.
+    Window,
 }
 
 /// Read `@sidebar_sort` from tmux global options, defaulting to `Repo`.
-/// Accepts `repo` (default) and `started`/`start`/`age`/`oldest` for the
-/// oldest-session-first flat list (case-insensitive).
+/// Accepts `repo` (default), `started`/`start`/`age`/`oldest` for the
+/// oldest-session-first flat list, and `window`/`windows`/`tmux` for
+/// grouping by tmux window (case-insensitive).
 pub fn sort_mode_from_options(opts: &HashMap<String, String>) -> SortMode {
     opts.get(tmux::SIDEBAR_SORT)
         .map(|s| s.trim().to_ascii_lowercase())
         .map(|s| match s.as_str() {
             "started" | "start" | "age" | "oldest" => SortMode::Started,
+            "window" | "windows" | "tmux" => SortMode::Window,
             _ => SortMode::Repo,
         })
         .unwrap_or(SortMode::Repo)
@@ -218,6 +223,18 @@ mod tests {
                 sort_mode_from_options(&opts),
                 SortMode::Repo,
                 "expected {value} to fall back to Repo"
+            );
+        }
+    }
+
+    #[test]
+    fn sort_mode_window_aliases() {
+        for value in ["window", "windows", "tmux", "  Window  "] {
+            let opts = opts_with(tmux::SIDEBAR_SORT, value);
+            assert_eq!(
+                sort_mode_from_options(&opts),
+                SortMode::Window,
+                "expected {value} to select Window"
             );
         }
     }

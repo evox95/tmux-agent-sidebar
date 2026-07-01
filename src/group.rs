@@ -78,6 +78,37 @@ pub fn resolve_pane_git_info(path: &str) -> PaneGitInfo {
     }
 }
 
+/// Resolve a pane's git metadata: the per-path cached git lookup plus the
+/// hook-provided worktree override. Shared by the repo and window groupers.
+fn pane_git_info(
+    pane: &crate::tmux::PaneInfo,
+    git_cache: &mut std::collections::HashMap<String, PaneGitInfo>,
+) -> PaneGitInfo {
+    // Cache the base git info per path. `get` first avoids a key clone on
+    // cache hits; misses fall through to `insert` which owns the key plus
+    // the (expensive) git-command lookup.
+    let mut git_info = match git_cache.get(pane.path.as_str()) {
+        Some(cached) => cached.clone(),
+        None => {
+            let resolved = resolve_pane_git_info(&pane.path);
+            git_cache.insert(pane.path.clone(), resolved.clone());
+            resolved
+        }
+    };
+
+    // Override with hook-provided worktree info (Claude Code provides this;
+    // Codex does not, so the git-command base remains as fallback).
+    if !pane.worktree.name.is_empty() {
+        git_info.worktree_name = Some(pane.worktree.name.clone());
+        git_info.is_worktree = true;
+    }
+    if !pane.worktree.branch.is_empty() {
+        git_info.branch = Some(pane.worktree.branch.clone());
+        git_info.is_worktree = true;
+    }
+    git_info
+}
+
 /// Group all panes across all sessions by repo root.
 /// Returns groups sorted alphabetically by display name (case-insensitive),
 /// so the order is stable regardless of which pane is encountered first.
@@ -89,29 +120,7 @@ pub fn group_panes_by_repo(sessions: &[crate::tmux::SessionInfo]) -> Vec<RepoGro
     for session in sessions {
         for window in &session.windows {
             for pane in &window.panes {
-                // Cache the base git info per path. `get` first avoids a key
-                // clone on cache hits; misses fall through to `insert` which
-                // owns the key plus the (expensive) git-command lookup.
-                let mut git_info = match git_cache.get(pane.path.as_str()) {
-                    Some(cached) => cached.clone(),
-                    None => {
-                        let resolved = resolve_pane_git_info(&pane.path);
-                        git_cache.insert(pane.path.clone(), resolved.clone());
-                        resolved
-                    }
-                };
-
-                // Override with hook-provided worktree info (Claude Code
-                // provides this; Codex does not, so the git-command base
-                // remains as fallback).
-                if !pane.worktree.name.is_empty() {
-                    git_info.worktree_name = Some(pane.worktree.name.clone());
-                    git_info.is_worktree = true;
-                }
-                if !pane.worktree.branch.is_empty() {
-                    git_info.branch = Some(pane.worktree.branch.clone());
-                    git_info.is_worktree = true;
-                }
+                let git_info = pane_git_info(pane, &mut git_cache);
 
                 let group_key = match &git_info.repo_root {
                     Some(root) => root.clone(),
@@ -144,6 +153,50 @@ pub fn group_panes_by_repo(sessions: &[crate::tmux::SessionInfo]) -> Vec<RepoGro
     let mut result: Vec<RepoGroup> = groups.into_values().collect();
     result.sort_by(|a, b| a.name.to_lowercase().cmp(&b.name.to_lowercase()));
     result
+}
+
+/// Group all panes by their tmux window, for `@sidebar_sort window`. Groups
+/// are kept in natural session→window encounter order (NOT sorted), so the
+/// sidebar mirrors the tmux window layout; the group name is the window name.
+/// Panes keep their per-pane git info so rows render branches/ports as usual.
+pub fn group_panes_by_window(sessions: &[crate::tmux::SessionInfo]) -> Vec<RepoGroup> {
+    // Keyed by window_id (unique per window); IndexMap preserves insertion
+    // order so windows appear top-to-bottom in the order tmux lists them.
+    let mut groups: IndexMap<String, RepoGroup> = IndexMap::new();
+    let mut git_cache: std::collections::HashMap<String, PaneGitInfo> =
+        std::collections::HashMap::new();
+
+    for session in sessions {
+        for window in &session.windows {
+            for pane in &window.panes {
+                let git_info = pane_git_info(pane, &mut git_cache);
+
+                let display_name = if window.window_name.is_empty() {
+                    window.window_id.clone()
+                } else {
+                    window.window_name.clone()
+                };
+
+                let has_focus = window.window_active && pane.pane_active;
+
+                let group = groups
+                    .entry(window.window_id.clone())
+                    .or_insert_with(|| RepoGroup {
+                        name: display_name,
+                        has_focus: false,
+                        panes: Vec::new(),
+                    });
+
+                if has_focus {
+                    group.has_focus = true;
+                }
+
+                group.panes.push((pane.clone(), git_info));
+            }
+        }
+    }
+
+    groups.into_values().collect()
 }
 
 /// Resolve a possibly-relative git path to an absolute canonical path.
@@ -247,6 +300,62 @@ mod tests {
             session_name: "main".into(),
             windows,
         }
+    }
+
+    fn named_window(id: &str, name: &str, panes: Vec<PaneInfo>) -> crate::tmux::WindowInfo {
+        crate::tmux::WindowInfo {
+            window_id: id.into(),
+            window_name: name.into(),
+            window_active: false,
+            auto_rename: false,
+            panes,
+        }
+    }
+
+    #[test]
+    fn group_panes_by_window_groups_per_window_in_tmux_order() {
+        // Two windows; the first ("zed") sorts after the second ("abc")
+        // alphabetically, so preserving tmux order (not sorting) is testable.
+        let sessions = vec![test_session(vec![
+            named_window("@1", "zed", vec![test_pane("%1", "/tmp")]),
+            named_window(
+                "@2",
+                "abc",
+                vec![test_pane("%2", "/tmp"), test_pane("%3", "/tmp")],
+            ),
+        ])];
+
+        let groups = group_panes_by_window(&sessions);
+
+        assert_eq!(groups.len(), 2, "one group per tmux window");
+        // Insertion (tmux) order preserved — NOT alphabetical.
+        assert_eq!(groups[0].name, "zed");
+        assert_eq!(groups[1].name, "abc");
+        let ids0: Vec<&str> = groups[0]
+            .panes
+            .iter()
+            .map(|(p, _)| p.pane_id.as_str())
+            .collect();
+        let ids1: Vec<&str> = groups[1]
+            .panes
+            .iter()
+            .map(|(p, _)| p.pane_id.as_str())
+            .collect();
+        assert_eq!(ids0, vec!["%1"]);
+        assert_eq!(ids1, vec!["%2", "%3"]);
+    }
+
+    #[test]
+    fn group_panes_by_window_same_name_different_windows_stay_separate() {
+        // Same window_name but distinct window_id => distinct groups.
+        let sessions = vec![test_session(vec![
+            named_window("@1", "shell", vec![test_pane("%1", "/tmp")]),
+            named_window("@2", "shell", vec![test_pane("%2", "/tmp")]),
+        ])];
+
+        let groups = group_panes_by_window(&sessions);
+
+        assert_eq!(groups.len(), 2, "distinct window ids must not merge");
     }
 
     #[test]
