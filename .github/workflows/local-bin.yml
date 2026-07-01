@@ -1,0 +1,43 @@
+name: local-bin
+
+# Personal integration branch: build the release binary in CI and commit it to
+# `bin/` (which is .gitignored, hence `git add -f`) so a tmux-plugin-manager
+# `prefix + U` on `evox95/tmux-agent-sidebar#local` pulls a ready-to-run binary
+# — no local Rust toolchain or manual build needed.
+#
+# No infinite loop: pushes made with the default GITHUB_TOKEN do not trigger
+# further workflow runs, and the commit is tagged [skip ci] as a belt-and-braces.
+
+on:
+  push:
+    branches: [local]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Ensure a recent stable Rust (edition 2024)
+        run: rustup update stable && rustup default stable
+
+      - name: Build release binary
+        run: cargo build --release
+
+      - name: Commit prebuilt binary for TPM
+        run: |
+          mkdir -p bin
+          cp target/release/tmux-agent-sidebar bin/tmux-agent-sidebar
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f bin/tmux-agent-sidebar
+          if git diff --cached --quiet; then
+            echo "binary unchanged — nothing to commit"
+          else
+            git commit -m "ci: prebuilt local binary [skip ci]"
+            git push
+          fi
