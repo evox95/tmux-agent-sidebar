@@ -264,10 +264,14 @@ fn split_window_flags(position: SidebarPosition) -> &'static str {
 ///   if the tmux call failed or the value was unparseable.
 /// - `session_attached`: parsed value of `#{session_attached}`, or `None`
 ///   if the tmux call failed or the value was unparseable.
+/// - `allow_last_window_kill`: value of the `@sidebar_auto_close_last_window`
+///   opt-in. When `false` (the default) the last window of a session is never
+///   auto-closed, so exiting an agent can never tear down the whole session.
 fn should_kill_window(
     list_panes_output: Option<&str>,
     session_windows: Option<u32>,
     session_attached: Option<u32>,
+    allow_last_window_kill: bool,
 ) -> bool {
     // `list-panes` failed or returned nothing: the window is either gone
     // already or tmux is too busy to answer. Do NOT treat "no output"
@@ -290,15 +294,16 @@ fn should_kill_window(
     };
 
     // Last window in the session: killing it destroys the session and
-    // drops every attached client. One attached client is fine — that
-    // matches normal tmux `exit` behaviour on the last pane. Two or
-    // more means a shared session (e.g. several terminal tabs attached
-    // to `main`) where we cannot tell which clients are "wanted", so
-    // preserve the sidebar instead. A missing `session_attached` errs
-    // on the side of preservation.
+    // drops every attached client — for a long-lived tmux hosting many
+    // agents that means the whole server can vanish when the final agent
+    // exits. So it is preserved by default; only the explicit
+    // `@sidebar_auto_close_last_window` opt-in allows it, and even then
+    // only with a single attached client (a shared session with two or
+    // more clients is always preserved, as is a missing/unparseable
+    // `session_attached`).
     match windows {
         0 => false,
-        1 => matches!(session_attached, Some(n) if n <= 1),
+        1 => allow_last_window_kill && matches!(session_attached, Some(n) if n <= 1),
         _ => true,
     }
 }
@@ -331,10 +336,15 @@ pub(crate) fn cmd_auto_close(args: &[String]) -> i32 {
     ])
     .and_then(|s| s.trim().parse().ok());
 
+    let allow_last_window_kill = tmux::get_option(tmux::SIDEBAR_AUTO_CLOSE_LAST_WINDOW)
+        .map(|s| matches!(s.as_str(), "on" | "true" | "1" | "yes"))
+        .unwrap_or(false);
+
     if should_kill_window(
         list_panes_output.as_deref(),
         session_windows,
         session_attached,
+        allow_last_window_kill,
     ) {
         let _ = tmux::run_tmux(&["kill-window", "-t", window_id]);
     }
@@ -445,57 +455,91 @@ mod tests {
     #[test]
     fn should_kill_window_kills_when_only_sidebar_and_other_windows_exist() {
         // Classic intended path: sidebar alone in a window, session has
-        // other windows to fall back on. Attached-client count is
-        // irrelevant because killing this window does not end the
-        // session.
-        assert!(should_kill_window(Some("sidebar"), Some(2), None));
-        assert!(should_kill_window(Some("sidebar"), Some(2), Some(0)));
-        assert!(should_kill_window(Some("sidebar"), Some(2), Some(5)));
+        // other windows to fall back on. Attached-client count and the
+        // last-window opt-in are both irrelevant because killing this
+        // window does not end the session.
+        assert!(should_kill_window(Some("sidebar"), Some(2), None, false));
+        assert!(should_kill_window(Some("sidebar"), Some(2), Some(0), false));
+        assert!(should_kill_window(Some("sidebar"), Some(2), Some(5), false));
     }
 
     #[test]
     fn should_kill_window_skips_when_non_sidebar_pane_remains() {
         // Another pane with `@pane_role` explicitly set to something
         // non-sidebar (e.g. a spawn-marked pane) keeps the window alive.
-        assert!(!should_kill_window(Some("sidebar\npane"), Some(5), Some(1)));
+        assert!(!should_kill_window(
+            Some("sidebar\npane"),
+            Some(5),
+            Some(1),
+            false
+        ));
         // `@pane_role` unset renders as an empty line — that pane is
         // a regular user pane, not a sidebar, so the window must stay.
         // The real tmux output for [sidebar pane, regular pane] is
         // "sidebar\n\n" (sidebar's role, then the regular pane's empty
         // role followed by the final record separator).
-        assert!(!should_kill_window(Some("sidebar\n\n"), Some(5), Some(1)));
-        assert!(!should_kill_window(Some("\nsidebar\n"), Some(5), Some(1)));
+        assert!(!should_kill_window(
+            Some("sidebar\n\n"),
+            Some(5),
+            Some(1),
+            false
+        ));
+        assert!(!should_kill_window(
+            Some("\nsidebar\n"),
+            Some(5),
+            Some(1),
+            false
+        ));
     }
 
     #[test]
     fn should_kill_window_skips_when_list_panes_failed() {
         // `list-panes` failure must never be treated as "window is empty" —
         // that used to let a busy-tmux race kill a live window.
-        assert!(!should_kill_window(None, Some(5), Some(1)));
+        assert!(!should_kill_window(None, Some(5), Some(1), false));
     }
 
     #[test]
     fn should_kill_window_skips_when_list_panes_empty() {
         // Whitespace-only output (e.g. window already gone) must not
         // trigger a kill either.
-        assert!(!should_kill_window(Some(""), Some(5), Some(1)));
-        assert!(!should_kill_window(Some("   \n"), Some(5), Some(1)));
+        assert!(!should_kill_window(Some(""), Some(5), Some(1), false));
+        assert!(!should_kill_window(Some("   \n"), Some(5), Some(1), false));
+    }
+
+    #[test]
+    fn should_kill_window_preserves_last_window_by_default() {
+        // Default (opt-in off): the last window of a session is NEVER
+        // auto-closed, regardless of attach state. Exiting the final
+        // agent must not tear down a long-lived tmux hosting many agents.
+        assert!(!should_kill_window(
+            Some("sidebar"),
+            Some(1),
+            Some(1),
+            false
+        ));
+        assert!(!should_kill_window(
+            Some("sidebar"),
+            Some(1),
+            Some(0),
+            false
+        ));
     }
 
     #[test]
     fn should_kill_window_kills_last_window_when_single_client_attached() {
-        // One client attached to a single-window session: destroying
-        // the session only detaches the same client that just kept the
-        // session alive, which matches tmux's standard `exit` behaviour
-        // on the last pane — the user expects the sidebar to go with it.
-        assert!(should_kill_window(Some("sidebar"), Some(1), Some(1)));
+        // With the `@sidebar_auto_close_last_window` opt-in on: one client
+        // attached to a single-window session, destroying the session only
+        // detaches the same client that just kept it alive, matching tmux's
+        // standard `exit` behaviour on the last pane.
+        assert!(should_kill_window(Some("sidebar"), Some(1), Some(1), true));
     }
 
     #[test]
     fn should_kill_window_kills_last_window_when_detached() {
-        // No clients attached: killing the session harms no one, and
-        // a stranded sidebar in a detached session is pointless anyway.
-        assert!(should_kill_window(Some("sidebar"), Some(1), Some(0)));
+        // Opt-in on, no clients attached: killing the session harms no one,
+        // and a stranded sidebar in a detached session is pointless anyway.
+        assert!(should_kill_window(Some("sidebar"), Some(1), Some(0), true));
     }
 
     #[test]
@@ -503,18 +547,18 @@ mod tests {
         // Core regression guard (0dc6e99): killing the last window of
         // a session drops every attached client. With multiple terminal
         // tabs sharing a single `main` session, that manifested as every
-        // tab dying at once. Keep the sidebar stranded rather than nuke
-        // the session.
-        assert!(!should_kill_window(Some("sidebar"), Some(1), Some(2)));
-        assert!(!should_kill_window(Some("sidebar"), Some(1), Some(7)));
+        // tab dying at once. Even with the opt-in on, keep the sidebar
+        // stranded rather than nuke the shared session.
+        assert!(!should_kill_window(Some("sidebar"), Some(1), Some(2), true));
+        assert!(!should_kill_window(Some("sidebar"), Some(1), Some(7), true));
     }
 
     #[test]
     fn should_kill_window_preserves_last_window_when_attached_query_failed() {
-        // Without knowing how many clients are attached we cannot prove
-        // the kill is safe. Better a lingering sidebar pane than a
-        // mass-disconnect.
-        assert!(!should_kill_window(Some("sidebar"), Some(1), None));
+        // Even with the opt-in on: without knowing how many clients are
+        // attached we cannot prove the kill is safe. Better a lingering
+        // sidebar pane than a mass-disconnect.
+        assert!(!should_kill_window(Some("sidebar"), Some(1), None, true));
     }
 
     #[test]
@@ -522,7 +566,7 @@ mod tests {
         // If we cannot prove the session has other windows, err on the
         // side of preservation. Better to leave a lingering sidebar
         // pane than to destroy a live workspace.
-        assert!(!should_kill_window(Some("sidebar"), None, Some(1)));
-        assert!(!should_kill_window(Some("sidebar"), Some(0), Some(1)));
+        assert!(!should_kill_window(Some("sidebar"), None, Some(1), true));
+        assert!(!should_kill_window(Some("sidebar"), Some(0), Some(1), true));
     }
 }
